@@ -44,8 +44,9 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 def get_mongo_client():
     """MongoDB connection"""
     return MongoClient(st.secrets["MONGO_URI"])
+
 def get_sheets_client():
-    """Google Sheets connection"""
+    """Google Sheets connection (silent tracking)"""
     try:
         creds = Credentials.from_service_account_info(
             {
@@ -57,7 +58,6 @@ def get_sheets_client():
             scopes=["https://www.googleapis.com/auth/spreadsheets"]
         )
         client = gspread.authorize(creds)
-        # CHANGE os.getenv to st.secrets here too
         return client.open_by_key(st.secrets["GOOGLE_SHEET_ID"]).sheet1
     except:
         return None
@@ -248,9 +248,9 @@ if st.session_state.page == 'landing':
     
     st.markdown("*Takes 2 minutes. Brutally honest. No BS.*")
     
-    # Social proof (when you have data)
+    # Social proof
     st.markdown("---")
-   
+    st.markdown("*Trusted by engineers making career decisions*")
 
 # ===================================
 # PAGE: QUESTIONS
