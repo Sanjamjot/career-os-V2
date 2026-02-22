@@ -22,7 +22,7 @@ from styles import get_custom_css
 load_dotenv()
 
 # Configure APIs
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 # Page config
@@ -43,22 +43,22 @@ st.markdown(get_custom_css(), unsafe_allow_html=True)
 @st.cache_resource
 def get_mongo_client():
     """MongoDB connection"""
-    return MongoClient(os.getenv("MONGO_URI"))
-
+    return MongoClient(st.secrets["MONGO_URI"])
 def get_sheets_client():
-    """Google Sheets connection (silent tracking)"""
+    """Google Sheets connection"""
     try:
         creds = Credentials.from_service_account_info(
             {
                 "type": "service_account",
-                "project_id": os.getenv("GOOGLE_PROJECT_ID"),
-                "private_key": os.getenv("GOOGLE_PRIVATE_KEY").replace('\\n', '\n'),
-                "client_email": os.getenv("GOOGLE_CLIENT_EMAIL"),
+                "project_id": st.secrets["GOOGLE_PROJECT_ID"],
+                "private_key": st.secrets["GOOGLE_PRIVATE_KEY"].replace('\\n', '\n'),
+                "client_email": st.secrets["GOOGLE_CLIENT_EMAIL"],
             },
             scopes=["https://www.googleapis.com/auth/spreadsheets"]
         )
         client = gspread.authorize(creds)
-        return client.open_by_key(os.getenv("GOOGLE_SHEET_ID")).sheet1
+        # CHANGE os.getenv to st.secrets here too
+        return client.open_by_key(st.secrets["GOOGLE_SHEET_ID"]).sheet1
     except:
         return None
 
