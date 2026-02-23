@@ -24,7 +24,14 @@ load_dotenv()
 # Configure APIs
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-2.5-flash')  # Updated model name
+    # Try multiple models in order of preference
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+    except:
+        try:
+            model = genai.GenerativeModel('gemini-1.5-pro')
+        except:
+            model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
     st.error(f"Gemini configuration error: {e}")
 
@@ -168,7 +175,17 @@ def save_assessment_silently(answers, verdict, resume_verdict=None):
 def get_career_verdict(answers):
     """Get AI career recommendation"""
     
-    prompt = f"""{CAREER_SYSTEM_PROMPT}
+    prompt = f"""You are Career OS — an AI career advisor for early-career tech professionals.
+
+CORE PRINCIPLES:
+- Optimize for long-term career leverage, NOT short-term money
+- Be blunt and realistic about market dynamics
+- Call out bad decisions clearly
+- No motivational fluff or generic platitudes
+
+TONE: Direct, mentor-like, professional but honest
+
+---
 
 ANALYZE THIS PROFILE:
 
@@ -185,29 +202,58 @@ Priority: {answers['priority']}
 Company: {answers['company_quality']}
 Weakness: {answers['skill_gap']}
 
-RESPOND WITH VALID JSON ONLY:
+RESPOND WITH VALID JSON ONLY (no markdown, no backticks):
 
 {{
-  "verdict": "SWITCH_NOW | BUILD_THEN_SWITCH | WAIT | PIVOT_STACK",
+  "verdict": "SWITCH_NOW",
   "confidence": 0.85,
   "one_line": "Brutal one-line summary",
   "why": ["Reason 1", "Reason 2", "Reason 3"],
   "risks_if_ignored": ["Risk 1", "Risk 2"],
   "90_day_plan": ["Week 1-4: Action", "Week 5-8: Action", "Week 9-12: Action"],
   "harsh_truth": "One uncomfortable reality they need to hear"
-}}"""
+}}
+
+VERDICT OPTIONS: SWITCH_NOW | BUILD_THEN_SWITCH | WAIT | PIVOT_STACK"""
 
     try:
+        # Try with safety settings to avoid blocks
+        safety_settings = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE",
+            },
+        ]
+        
         # Generate content with better error handling
         response = model.generate_content(
             prompt,
+            safety_settings=safety_settings,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.7,
                 top_p=0.9,
                 top_k=40,
-                max_output_tokens=4096,
+                max_output_tokens=2048,
             )
         )
+        
+        # Check if response was blocked
+        if not response.text:
+            st.error("Response was blocked by safety filters")
+            st.write("Prompt feedback:", response.prompt_feedback)
+            return None
         
         # Get text
         raw_text = response.text
@@ -222,17 +268,31 @@ RESPOND WITH VALID JSON ONLY:
         required_fields = ['verdict', 'confidence', 'one_line', 'why', 'risks_if_ignored', '90_day_plan', 'harsh_truth']
         for field in required_fields:
             if field not in verdict:
-                raise ValueError(f"Missing field: {field}")
+                st.error(f"Missing field in response: {field}")
+                return None
         
         return verdict
         
     except json.JSONDecodeError as e:
-        st.error(f"JSON Parse Error: {e}")
-        st.code(raw_text if 'raw_text' in locals() else "No response", language='text')
+        st.error(f"❌ JSON Parse Error: {e}")
+        if 'raw_text' in locals():
+            st.code(raw_text[:500], language='text')
         return None
+        
     except Exception as e:
-        st.error(f"Gemini API Error: {str(e)}")
-        st.error(f"Error type: {type(e).__name__}")
+        error_msg = str(e)
+        st.error(f"❌ Gemini API Error: {error_msg}")
+        
+        # Common error types
+        if "quota" in error_msg.lower():
+            st.error("⚠️ API quota exceeded. Please wait a few minutes and try again.")
+        elif "api key" in error_msg.lower():
+            st.error("⚠️ API key issue. Check your Streamlit secrets.")
+        elif "model" in error_msg.lower():
+            st.error("⚠️ Model not available. Try using gemini-1.5-pro instead.")
+        else:
+            st.error(f"Error type: {type(e).__name__}")
+            
         return None
 
 def analyze_resume(file_content):
@@ -262,7 +322,7 @@ RESPOND WITH VALID JSON:
             prompt,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.7,
-                max_output_tokens=8192,
+                max_output_tokens=1024,
             )
         )
         
@@ -362,15 +422,31 @@ elif st.session_state.page == 'questions':
             
             st.markdown("<br>", unsafe_allow_html=True)
         
-        submitted = st.form_submit_button("Get My Verdict", type="primary", use_container_width=True)
+        # Show loading state if processing
+        if st.session_state.get('processing', False):
+            st.info("⏳ **Processing your assessment... Please wait, do not refresh!**")
+        
+        submitted = st.form_submit_button(
+            "Get My Verdict", 
+            type="primary", 
+            use_container_width=True,
+            disabled=st.session_state.get('processing', False)  # Disable when processing
+        )
         
         if submitted:
             # Validation
             if 'tech_stack' in answers and len(answers.get('tech_stack', [])) == 0:
                 st.error("Select at least one technology you actually know")
             else:
-                st.session_state.answers = answers
-                st.session_state.page = 'processing'
+                # Show immediate feedback
+                with st.spinner("⏳ Processing your assessment..."):
+                    import time
+                    time.sleep(0.5)  # Brief pause to show loading
+                    
+                    # Set processing flag
+                    st.session_state.processing = True
+                    st.session_state.answers = answers
+                    st.session_state.page = 'processing'
                 st.rerun()
 
 # ===================================
@@ -404,10 +480,12 @@ elif st.session_state.page == 'processing':
         
         progress.progress(100)
         st.session_state.verdict = verdict
+        st.session_state.processing = False  # Reset processing flag
         st.session_state.page = 'verdict'
         time.sleep(0.5)
         st.rerun()
     else:
+        st.session_state.processing = False  # Reset on error too
         st.error("Analysis failed. Please try again.")
         if st.button("Back to Questions"):
             st.session_state.page = 'questions'
