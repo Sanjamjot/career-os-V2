@@ -19,7 +19,7 @@ QUESTIONS = [
         "id": "comp_gap",
         "type": "comp_range",
         "label": "Compensation Reality Check",
-        "current_label": "Current annual package (₹)",
+        "current_label": "Current annual package (₹) if internship write stipend*12",
         "target_label": "What you think you deserve (₹)",
         "help": "We'll tell you if you're delusional or underpaid"
         
