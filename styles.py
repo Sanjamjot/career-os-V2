@@ -13,23 +13,34 @@ def get_custom_css():
 }
 
 /* ======================================
-   COLOR SYSTEM (Luxury Palette)
+   THEME-AWARE LUXURY COLOR SYSTEM
 ====================================== */
+
+/* Default (Light Mode inherits Streamlit vars) */
 :root {
-    --bg-primary: #f8f6f2;
-    --bg-card: rgba(255,255,255,0.65);
-    --text-primary: #111111;
-    --text-secondary: #5a5a5a;
+    --bg-primary: var(--background-color);
+    --bg-card: var(--secondary-background-color);
+    --text-primary: var(--text-color);
+    --text-secondary: rgba(120,120,120,0.9);
+
     --accent-gold: #b89b5e;
     --accent-gold-soft: rgba(184,155,94,0.15);
+
     --border-soft: rgba(0,0,0,0.08);
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] {
+    --accent-gold: #d4b97f;
+    --accent-gold-soft: rgba(212,185,127,0.18);
+    --border-soft: rgba(255,255,255,0.08);
 }
 
 /* ======================================
    GLOBAL BACKGROUND
 ====================================== */
 html, body {
-    background: linear-gradient(135deg, #f8f6f2 0%, #f1eee9 100%);
+    background: var(--bg-primary);
     color: var(--text-primary);
 }
 
@@ -56,7 +67,7 @@ html, body {
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 1.1;
-    color: #111;
+    color: var(--text-primary);
 }
 
 .hero h3 {
@@ -67,7 +78,6 @@ html, body {
     line-height: 1.7;
 }
 
-/* Subtle gold underline accent */
 .hero h1::after {
     content: "";
     display: block;
@@ -79,11 +89,11 @@ html, body {
 }
 
 /* ======================================
-   BUTTONS (Luxury CTA)
+   BUTTONS
 ====================================== */
 .stButton > button {
-    background: #111;
-    color: white;
+    background: var(--text-primary);
+    color: var(--bg-primary);
     font-weight: 600;
     border-radius: 14px;
     padding: 1rem 2.5rem;
@@ -94,7 +104,6 @@ html, body {
 }
 
 .stButton > button:hover {
-    background: #1c1c1c;
     transform: translateY(-3px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.18);
 }
@@ -108,7 +117,7 @@ html, body {
 ====================================== */
 .stForm {
     background: var(--bg-card);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(18px);
     border-radius: 22px;
     padding: 2.8rem;
     border: 1px solid var(--border-soft);
@@ -116,6 +125,11 @@ html, body {
         0 20px 60px rgba(0,0,0,0.05),
         0 5px 15px rgba(0,0,0,0.04);
     animation: fadeUp 0.6s ease-out;
+}
+
+/* Dark Glass Enhancement */
+[data-theme="dark"] .stForm {
+    background: rgba(30,30,30,0.6);
 }
 
 /* ======================================
@@ -134,7 +148,7 @@ html, body {
 }
 
 /* ======================================
-   RADIO OPTIONS (Luxury Cards)
+   RADIO OPTIONS
 ====================================== */
 .stRadio > div {
     display: grid;
@@ -145,7 +159,7 @@ html, body {
     padding: 1.2rem 1.6rem;
     border-radius: 16px;
     border: 1px solid var(--border-soft);
-    background: white;
+    background: var(--bg-card);
     transition: all 0.3s ease;
     font-weight: 500;
 }
@@ -171,7 +185,8 @@ html, body {
     border-radius: 14px !important;
     border: 1px solid var(--border-soft) !important;
     padding: 0.9rem !important;
-    background: white !important;
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
     transition: all 0.2s ease !important;
 }
 
@@ -194,7 +209,7 @@ html, body {
     background: var(--accent-gold);
     width: 22px;
     height: 22px;
-    border: 3px solid white;
+    border: 3px solid var(--bg-primary);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -227,12 +242,12 @@ html, body {
     width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-    background: #d4c4a8;
+    background: var(--accent-gold);
     border-radius: 6px;
 }
 
 /* ======================================
-   SELECTION COLOR
+   SELECTION
 ====================================== */
 ::selection {
     background: var(--accent-gold);
