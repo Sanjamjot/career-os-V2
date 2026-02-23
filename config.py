@@ -21,7 +21,9 @@ QUESTIONS = [
         "label": "Compensation Reality Check",
         "current_label": "Current annual package (₹)",
         "target_label": "What you think you deserve (₹)",
-        "help": "We'll tell you if you're delusional or underpaid"
+        "help": "We'll tell you if you're delusional or underpaid
+        Please convert your stipend into LPA"
+        
     },
     {
         "id": "tech_stack",
