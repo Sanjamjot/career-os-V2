@@ -245,7 +245,7 @@ VERDICT OPTIONS: SWITCH_NOW | BUILD_THEN_SWITCH | WAIT | PIVOT_STACK"""
                 temperature=0.7,
                 top_p=0.9,
                 top_k=40,
-                max_output_tokens=2048,
+                max_output_tokens=4096,
             )
         )
         
@@ -322,7 +322,7 @@ RESPOND WITH VALID JSON:
             prompt,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.7,
-                max_output_tokens=1024,
+                max_output_tokens=8192,
             )
         )
         
