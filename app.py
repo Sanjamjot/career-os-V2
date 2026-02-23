@@ -24,7 +24,7 @@ load_dotenv()
 # Configure APIs
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-1.5-flash')  # Updated model name
+    model = genai.GenerativeModel('gemini-2.5-flash')  # Updated model name
 except Exception as e:
     st.error(f"Gemini configuration error: {e}")
 
