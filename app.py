@@ -315,6 +315,7 @@ Analyze this resume for Indian tech market competitiveness.
 -Be real and a little strict 
 -We are to help people not sugercoat 
 -Read it completely and do not halucinate
+-Do not go anything beyond resume like  a second-year student etc etc
 RESUME TEXT:
 {file_content[:4000]}
 
