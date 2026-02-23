@@ -2,58 +2,45 @@ def get_custom_css():
     return """
 <style>
 
-/* ============================================================
-   APPLE-STYLE DESIGN SYSTEM
-============================================================ */
-
-/* FONT */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+/* ======================================
+   LUXURY FONT STACK
+====================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* ============================================================
-   COLOR SYSTEM (APPLE MINIMAL)
-============================================================ */
+/* ======================================
+   THEME-AWARE LUXURY COLOR SYSTEM
+====================================== */
 
-/* Light */
+/* Default (Light Mode inherits Streamlit vars) */
 :root {
-    --bg-main: #ffffff;
-    --bg-soft: #f5f5f7;
-    --bg-glass: rgba(255,255,255,0.7);
+    --bg-primary: var(--background-color);
+    --bg-card: var(--secondary-background-color);
+    --text-primary: var(--text-color);
+    --text-secondary: rgba(120,120,120,0.9);
 
-    --text-primary: #1d1d1f;
-    --text-secondary: #6e6e73;
+    --accent-gold: #b89b5e;
+    --accent-gold-soft: rgba(184,155,94,0.15);
 
-    --accent: #0071e3;
-    --accent-hover: #0058b0;
-
-    --border: rgba(0,0,0,0.08);
+    --border-soft: rgba(0,0,0,0.08);
 }
 
-/* Dark */
+/* Dark Mode Overrides */
 [data-theme="dark"] {
-    --bg-main: #000000;
-    --bg-soft: #111111;
-    --bg-glass: rgba(28,28,30,0.6);
-
-    --text-primary: #f5f5f7;
-    --text-secondary: #86868b;
-
-    --accent: #2997ff;
-    --accent-hover: #409cff;
-
-    --border: rgba(255,255,255,0.08);
+    --accent-gold: #d4b97f;
+    --accent-gold-soft: rgba(212,185,127,0.18);
+    --border-soft: rgba(255,255,255,0.08);
 }
 
-/* ============================================================
-   GLOBAL
-============================================================ */
-
+/* ======================================
+   GLOBAL BACKGROUND
+====================================== */
 html, body {
-    background: var(--bg-main);
+    background: var(--bg-primary);
     color: var(--text-primary);
 }
 
@@ -61,170 +48,209 @@ html, body {
 .stDeployButton {display: none;}
 
 .block-container {
-    max-width: 1100px;
-    padding: 5rem 2rem;
+    max-width: 860px;
+    padding: 3.5rem 1.5rem 4rem 1.5rem;
     margin: auto;
 }
 
-/* ============================================================
-   HERO SECTION (BIG APPLE STYLE)
-============================================================ */
-
+/* ======================================
+   HERO SECTION
+====================================== */
 .hero {
     text-align: center;
-    padding: 6rem 0 4rem 0;
-    animation: fadeIn 0.8s ease-out;
+    padding: 5rem 0 3rem 0;
+    animation: fadeUp 0.7s ease-out;
 }
 
 .hero h1 {
-    font-size: 4rem;
+    font-size: 3.2rem;
     font-weight: 800;
     letter-spacing: -0.04em;
-    line-height: 1.05;
+    line-height: 1.1;
+    color: var(--text-primary);
 }
 
 .hero h3 {
-    font-size: 1.5rem;
-    font-weight: 400;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    margin-top: 1.5rem;
-    line-height: 1.6;
+    max-width: 580px;
+    margin: 1.5rem auto 2.5rem auto;
+    line-height: 1.7;
 }
 
-/* ============================================================
-   GLASS CARD SECTIONS
-============================================================ */
-
-.stForm {
-    background: var(--bg-glass);
-    backdrop-filter: blur(30px);
-    border-radius: 28px;
-    padding: 3rem;
-    border: 1px solid var(--border);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.06);
-    animation: fadeInUp 0.6s ease-out;
+.hero h1::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    margin: 1.5rem auto 0 auto;
+    background: var(--accent-gold);
+    border-radius: 3px;
 }
 
-/* ============================================================
-   BUTTONS (APPLE FLOATING)
-============================================================ */
-
+/* ======================================
+   BUTTONS
+====================================== */
 .stButton > button {
-    border-radius: 999px;
-    padding: 0.9rem 2.8rem;
+    background: var(--text-primary);
+    color: var(--bg-primary);
     font-weight: 600;
-    font-size: 1rem;
+    border-radius: 14px;
+    padding: 1rem 2.5rem;
     border: none;
+    letter-spacing: -0.01em;
     transition: all 0.25s ease;
-    cursor: pointer;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-/* Primary */
-.stButton > button[kind="primary"] {
-    background: var(--accent);
-    color: white;
+.stButton > button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.18);
 }
 
-.stButton > button[kind="primary"]:hover {
-    background: var(--accent-hover);
-    transform: scale(1.04);
+.stButton > button:active {
+    transform: translateY(0);
 }
 
-/* Secondary */
-.stButton > button:not([kind="primary"]) {
-    background: var(--bg-soft);
+/* ======================================
+   GLASS CARD FORM
+====================================== */
+.stForm {
+    background: var(--bg-card);
+    backdrop-filter: blur(18px);
+    border-radius: 22px;
+    padding: 2.8rem;
+    border: 1px solid var(--border-soft);
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.05),
+        0 5px 15px rgba(0,0,0,0.04);
+    animation: fadeUp 0.6s ease-out;
+}
+
+/* Dark Glass Enhancement */
+[data-theme="dark"] .stForm {
+    background: rgba(30,30,30,0.6);
+}
+
+/* ======================================
+   FORM LABELS
+====================================== */
+.stRadio > label,
+.stSelectbox > label,
+.stMultiSelect > label,
+.stSlider > label,
+.stNumberInput > label {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 0.8rem;
+    display: block;
     color: var(--text-primary);
-    border: 1px solid var(--border);
 }
 
-.stButton > button:not([kind="primary"]):hover {
-    transform: scale(1.04);
+/* ======================================
+   RADIO OPTIONS
+====================================== */
+.stRadio > div {
+    display: grid;
+    gap: 0.9rem;
 }
 
-/* ============================================================
-   INPUTS (CLEAN & ROUNDED)
-============================================================ */
+.stRadio > div > label {
+    padding: 1.2rem 1.6rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
 
+.stRadio > div > label:hover {
+    border-color: var(--accent-gold);
+    background: var(--accent-gold-soft);
+    transform: translateY(-2px);
+}
+
+.stRadio > div > label[data-checked="true"] {
+    border-color: var(--accent-gold);
+    background: var(--accent-gold-soft);
+    font-weight: 600;
+}
+
+/* ======================================
+   INPUT FIELDS
+====================================== */
 .stSelectbox > div > div,
 .stMultiSelect > div > div,
 .stNumberInput > div > div > input {
-    border-radius: 16px !important;
-    border: 1px solid var(--border) !important;
-    padding: 1rem !important;
-    background: var(--bg-soft) !important;
+    border-radius: 14px !important;
+    border: 1px solid var(--border-soft) !important;
+    padding: 0.9rem !important;
+    background: var(--bg-card) !important;
     color: var(--text-primary) !important;
+    transition: all 0.2s ease !important;
 }
 
 .stSelectbox > div > div:focus-within,
 .stMultiSelect > div > div:focus-within,
 .stNumberInput > div > div > input:focus {
-    border-color: var(--accent) !important;
+    border-color: var(--accent-gold) !important;
+    box-shadow: 0 0 0 3px var(--accent-gold-soft) !important;
 }
 
-/* ============================================================
-   RADIO (APPLE STYLE CARDS)
-============================================================ */
-
-.stRadio > div {
-    display: grid;
-    gap: 1rem;
+/* ======================================
+   SLIDER
+====================================== */
+.stSlider > div > div > div > div {
+    background: var(--accent-gold);
+    height: 6px;
 }
 
-.stRadio > div > label {
-    padding: 1.2rem 1.5rem;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--bg-soft);
-    transition: all 0.25s ease;
+.stSlider > div > div > div > div > div {
+    background: var(--accent-gold);
+    width: 22px;
+    height: 22px;
+    border: 3px solid var(--bg-primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.stRadio > div > label:hover {
-    transform: translateY(-3px);
-}
-
-.stRadio > div > label[data-checked="true"] {
-    border-color: var(--accent);
-    background: rgba(0,113,227,0.08);
-    font-weight: 600;
-}
-
-/* ============================================================
+/* ======================================
    PROGRESS BAR
-============================================================ */
-
+====================================== */
 .stProgress > div > div {
-    background: var(--accent);
-    border-radius: 20px;
+    background: var(--accent-gold);
+    border-radius: 10px;
 }
 
-/* ============================================================
-   ANIMATIONS
-============================================================ */
-
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
+/* ======================================
+   ANIMATION
+====================================== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-@keyframes fadeInUp {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-/* ============================================================
-   SCROLLBAR (MINIMAL)
-============================================================ */
-
+/* ======================================
+   SCROLLBAR
+====================================== */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--text-secondary);
-    border-radius: 8px;
+    background: var(--accent-gold);
+    border-radius: 6px;
 }
 
+/* ======================================
+   SELECTION
+====================================== */
 ::selection {
-    background: var(--accent);
+    background: var(--accent-gold);
     color: white;
 }
 
