@@ -2,9 +2,9 @@ def get_custom_css():
     return """
 <style>
 
-/* ======================================
-   LUXURY FONT STACK
-====================================== */
+/* =====================================================
+   PREMIUM FONT
+===================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
@@ -12,16 +12,14 @@ def get_custom_css():
     -webkit-font-smoothing: antialiased;
 }
 
-/* ======================================
-   THEME-AWARE LUXURY COLOR SYSTEM
-====================================== */
-
-/* Default (Light Mode inherits Streamlit vars) */
+/* =====================================================
+   THEME-AWARE COLOR SYSTEM
+===================================================== */
 :root {
     --bg-primary: var(--background-color);
     --bg-card: var(--secondary-background-color);
     --text-primary: var(--text-color);
-    --text-secondary: rgba(120,120,120,0.9);
+    --text-secondary: rgba(130,130,130,0.9);
 
     --accent-gold: #b89b5e;
     --accent-gold-soft: rgba(184,155,94,0.15);
@@ -36,9 +34,9 @@ def get_custom_css():
     --border-soft: rgba(255,255,255,0.08);
 }
 
-/* ======================================
-   GLOBAL BACKGROUND
-====================================== */
+/* =====================================================
+   GLOBAL
+===================================================== */
 html, body {
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -48,22 +46,21 @@ html, body {
 .stDeployButton {display: none;}
 
 .block-container {
-    max-width: 860px;
-    padding: 3.5rem 1.5rem 4rem 1.5rem;
+    max-width: 900px;
+    padding: 3rem 1.5rem 4rem 1.5rem;
     margin: auto;
 }
 
-/* ======================================
+/* =====================================================
    HERO SECTION
-====================================== */
+===================================================== */
 .hero {
     text-align: center;
-    padding: 5rem 0 3rem 0;
-    animation: fadeUp 0.7s ease-out;
+    padding: 4rem 0 3rem 0;
 }
 
 .hero h1 {
-    font-size: 3.2rem;
+    font-size: 3rem;
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 1.1;
@@ -73,68 +70,89 @@ html, body {
 .hero h3 {
     font-size: 1.2rem;
     color: var(--text-secondary);
-    max-width: 580px;
-    margin: 1.5rem auto 2.5rem auto;
+    max-width: 600px;
+    margin: 1.5rem auto 2rem auto;
     line-height: 1.7;
 }
 
 .hero h1::after {
     content: "";
     display: block;
-    width: 60px;
+    width: 70px;
     height: 3px;
     margin: 1.5rem auto 0 auto;
     background: var(--accent-gold);
     border-radius: 3px;
 }
 
-/* ======================================
-   BUTTONS
-====================================== */
+/* =====================================================
+   PREMIUM BUTTON SYSTEM
+===================================================== */
 .stButton > button {
-    background: var(--text-primary);
-    color: var(--bg-primary);
-    font-weight: 600;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 1rem 2.5rem;
-    border: none;
+    font-weight: 600;
     letter-spacing: -0.01em;
+    border: none;
+    cursor: pointer;
     transition: all 0.25s ease;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-.stButton > button:hover {
+/* PRIMARY */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, var(--accent-gold), #d4b97f);
+    color: #111;
+    box-shadow:
+        0 10px 25px rgba(184,155,94,0.3),
+        0 4px 10px rgba(0,0,0,0.12);
+}
+
+.stButton > button[kind="primary"]:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+    box-shadow:
+        0 15px 35px rgba(184,155,94,0.4),
+        0 6px 18px rgba(0,0,0,0.15);
 }
 
-.stButton > button:active {
+.stButton > button[kind="primary"]:active {
     transform: translateY(0);
 }
 
-/* ======================================
-   GLASS CARD FORM
-====================================== */
+/* SECONDARY */
+.stButton > button:not([kind="primary"]) {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-soft);
+}
+
+.stButton > button:not([kind="primary"]):hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    transform: translateY(-2px);
+}
+
+/* =====================================================
+   GLASS FORM CARD
+===================================================== */
 .stForm {
     background: var(--bg-card);
     backdrop-filter: blur(18px);
     border-radius: 22px;
-    padding: 2.8rem;
+    padding: 2.5rem;
     border: 1px solid var(--border-soft);
     box-shadow:
         0 20px 60px rgba(0,0,0,0.05),
         0 5px 15px rgba(0,0,0,0.04);
-    animation: fadeUp 0.6s ease-out;
 }
 
-/* Dark Glass Enhancement */
+/* Dark Glass */
 [data-theme="dark"] .stForm {
     background: rgba(30,30,30,0.6);
 }
 
-/* ======================================
+/* =====================================================
    FORM LABELS
-====================================== */
+===================================================== */
 .stRadio > label,
 .stSelectbox > label,
 .stMultiSelect > label,
@@ -147,17 +165,17 @@ html, body {
     color: var(--text-primary);
 }
 
-/* ======================================
+/* =====================================================
    RADIO OPTIONS
-====================================== */
+===================================================== */
 .stRadio > div {
     display: grid;
     gap: 0.9rem;
 }
 
 .stRadio > div > label {
-    padding: 1.2rem 1.6rem;
-    border-radius: 16px;
+    padding: 1.1rem 1.4rem;
+    border-radius: 14px;
     border: 1px solid var(--border-soft);
     background: var(--bg-card);
     transition: all 0.3s ease;
@@ -176,9 +194,9 @@ html, body {
     font-weight: 600;
 }
 
-/* ======================================
+/* =====================================================
    INPUT FIELDS
-====================================== */
+===================================================== */
 .stSelectbox > div > div,
 .stMultiSelect > div > div,
 .stNumberInput > div > div > input {
@@ -187,7 +205,6 @@ html, body {
     padding: 0.9rem !important;
     background: var(--bg-card) !important;
     color: var(--text-primary) !important;
-    transition: all 0.2s ease !important;
 }
 
 .stSelectbox > div > div:focus-within,
@@ -197,9 +214,9 @@ html, body {
     box-shadow: 0 0 0 3px var(--accent-gold-soft) !important;
 }
 
-/* ======================================
+/* =====================================================
    SLIDER
-====================================== */
+===================================================== */
 .stSlider > div > div > div > div {
     background: var(--accent-gold);
     height: 6px;
@@ -210,34 +227,19 @@ html, body {
     width: 22px;
     height: 22px;
     border: 3px solid var(--bg-primary);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* ======================================
+/* =====================================================
    PROGRESS BAR
-====================================== */
+===================================================== */
 .stProgress > div > div {
     background: var(--accent-gold);
     border-radius: 10px;
 }
 
-/* ======================================
-   ANIMATION
-====================================== */
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ======================================
+/* =====================================================
    SCROLLBAR
-====================================== */
+===================================================== */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -246,9 +248,9 @@ html, body {
     border-radius: 6px;
 }
 
-/* ======================================
-   SELECTION
-====================================== */
+/* =====================================================
+   TEXT SELECTION
+===================================================== */
 ::selection {
     background: var(--accent-gold);
     color: white;
