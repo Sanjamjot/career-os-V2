@@ -22,8 +22,11 @@ from styles import get_custom_css
 load_dotenv()
 
 # Configure APIs
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-2.5-flash')
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model = genai.GenerativeModel('gemini-2.0-flash-exp')  # Updated model name
+except Exception as e:
+    st.error(f"Gemini configuration error: {e}")
 
 # Page config
 st.set_page_config(
@@ -148,7 +151,8 @@ def save_assessment_silently(answers, verdict, resume_verdict=None):
                     int((datetime.now() - st.session_state.start_time).total_seconds())
                 ]
                 sheet.append_row(row)
-        except:
+        except Exception as e:
+            print(f"Sheets error: {e}")
             pass  # Silent fail - never show errors to user
             
         return True
@@ -194,11 +198,41 @@ RESPOND WITH VALID JSON ONLY:
 }}"""
 
     try:
-        response = model.generate_content(prompt)
-        text = response.text.replace('```json', '').replace('```', '').strip()
-        return json.loads(text)
+        # Generate content with better error handling
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0.7,
+                top_p=0.9,
+                top_k=40,
+                max_output_tokens=2048,
+            )
+        )
+        
+        # Get text
+        raw_text = response.text
+        
+        # Clean response
+        text = raw_text.replace('```json', '').replace('```', '').strip()
+        
+        # Parse JSON
+        verdict = json.loads(text)
+        
+        # Validate required fields
+        required_fields = ['verdict', 'confidence', 'one_line', 'why', 'risks_if_ignored', '90_day_plan', 'harsh_truth']
+        for field in required_fields:
+            if field not in verdict:
+                raise ValueError(f"Missing field: {field}")
+        
+        return verdict
+        
+    except json.JSONDecodeError as e:
+        st.error(f"JSON Parse Error: {e}")
+        st.code(raw_text if 'raw_text' in locals() else "No response", language='text')
+        return None
     except Exception as e:
-        st.error("AI analysis failed. Please try again.")
+        st.error(f"Gemini API Error: {str(e)}")
+        st.error(f"Error type: {type(e).__name__}")
         return None
 
 def analyze_resume(file_content):
@@ -224,10 +258,20 @@ RESPOND WITH VALID JSON:
 }}"""
 
     try:
-        response = model.generate_content(prompt)
-        text = response.text.replace('```json', '').replace('```', '').strip()
+        response = model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0.7,
+                max_output_tokens=1024,
+            )
+        )
+        
+        raw_text = response.text
+        text = raw_text.replace('```json', '').replace('```', '').strip()
         return json.loads(text)
-    except:
+        
+    except Exception as e:
+        st.error(f"Resume analysis error: {str(e)}")
         return None
 
 # ===================================
@@ -365,6 +409,9 @@ elif st.session_state.page == 'processing':
         st.rerun()
     else:
         st.error("Analysis failed. Please try again.")
+        if st.button("Back to Questions"):
+            st.session_state.page = 'questions'
+            st.rerun()
 
 # ===================================
 # PAGE: VERDICT
