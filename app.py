@@ -550,11 +550,27 @@ elif st.session_state.page == 'verdict':
     )
     
     if uploaded is not None:
+        # Show loading state if processing resume
+        if st.session_state.get('processing_resume', False):
+            st.info("⏳ **Analyzing your resume... Please wait, do not refresh!**")
+        
         # Store the file bytes immediately
-        if st.button("Analyze Resume", type="primary"):
-            st.session_state.resume_file_bytes = uploaded.read()
-            st.session_state.resume_file_name = uploaded.name
-            st.session_state.page = 'resume_processing'
+        analyze_button = st.button(
+            "Analyze Resume", 
+            type="primary",
+            disabled=st.session_state.get('processing_resume', False)  # Disable when processing
+        )
+        
+        if analyze_button:
+            # Show immediate feedback
+            with st.spinner("⏳ Processing your resume..."):
+                import time
+                time.sleep(0.5)
+                
+                st.session_state.processing_resume = True
+                st.session_state.resume_file_bytes = uploaded.read()
+                st.session_state.resume_file_name = uploaded.name
+                st.session_state.page = 'resume_processing'
             st.rerun()
     
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -593,6 +609,7 @@ elif st.session_state.page == 'resume_processing':
         st.write(f"📝 Total text length: {len(resume_text)} characters")
         
         if not resume_text or len(resume_text) < 100:
+            st.session_state.processing_resume = False  # Reset flag
             st.error("❌ Could not extract enough text from PDF.")
             st.warning("**Possible reasons:**")
             st.markdown("- PDF is image-based (scanned document)")
@@ -622,16 +639,19 @@ elif st.session_state.page == 'resume_processing':
                 )
                 
                 st.session_state.resume_verdict = resume_verdict
+                st.session_state.processing_resume = False  # Reset flag
                 st.session_state.page = 'resume_verdict'
                 time.sleep(0.5)
                 st.rerun()
             else:
+                st.session_state.processing_resume = False  # Reset on error
                 st.error("❌ Resume analysis failed. AI couldn't process the text.")
                 if st.button("Back to Verdict"):
                     st.session_state.page = 'verdict'
                     st.rerun()
     
     except Exception as e:
+        st.session_state.processing_resume = False  # Reset flag on error
         st.error(f"❌ Error processing PDF: {str(e)}")
         st.code(str(e), language='text')
         st.error("**Please try:**")
